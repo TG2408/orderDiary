@@ -1,30 +1,38 @@
 const addItems = document.querySelector('.add-items');
-let itemsList = document.querySelector('.orders');
-let items ;
+const itemsList = document.querySelector('.orders');
+const reset = document.getElementById("reset");
 
-let orders =  window.localStorage.getItem("orders", items);
+// displaying previously added orders
+let orders =  window.localStorage.getItem("orders");
 if (orders != null) {
     let arr = orders.split(",");
     for(let i=0; i<arr.length; i++) {
-        itemsList.innerHTML += "<li>" + arr[i] + "</li>"; 
+        itemsList.innerHTML += (`
+            <li>
+            <input type="checkbox" id="itemId${i}">
+            <label for="itemId${i}">${arr[i]}</label><br>  
+            </li>
+        `); 
     }
 }
 
 addItems.addEventListener("submit" , (e) => {
-
     e.preventDefault();
-    
-    let x = document.forms["myForm"]["item"] ;
 
-    orders = window.localStorage.getItem("orders");
+    let newItem = document.forms["myForm"]["item"] ;
 
-    if (orders == null) window.localStorage.setItem("orders", items);
+    let orders = window.localStorage.getItem("orders");
+
+    if (orders == null) {
+        window.localStorage.setItem("orders","");
+        orders = window.localStorage.getItem("orders");
+    }
 
     let arr = orders.split(",");
 
-    arr = arr.filter((value) => value != "undefined");
+    arr = arr.filter((value) => value != "");
 
-    arr.push(x.value);
+    arr.push(newItem.value);
 
     window.localStorage.setItem("orders", arr);
 
@@ -33,8 +41,18 @@ addItems.addEventListener("submit" , (e) => {
     itemsList.innerHTML = "";
 
     for(let i=0; i<arr.length; i++) {
-        itemsList.innerHTML += "<li>" + arr[i] + "</li>"; 
+        itemsList.innerHTML += (
+            `<li>
+                <input type="checkbox" >
+                <label for="itemId${i}">${arr[i]}</label><br>  
+            </li>`
+        ); 
     }
 
-    x.value = "";
+    newItem.value = "";
+})
+
+reset.addEventListener("click", () => {
+    localStorage.removeItem("orders")
+    itemsList.innerHTML = "";
 })
